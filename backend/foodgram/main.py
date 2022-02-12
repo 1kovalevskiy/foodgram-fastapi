@@ -15,18 +15,18 @@ from api.api_router import api_router
 from core import settings
 
 
-app = FastAPI(title=settings.PROJECT_NAME)
+app = FastAPI(title=settings.PROJECT_NAME, docs_url="/documentation/")
 app.add_middleware(LoggingSystem)
 app.include_router(api_router, prefix='/api')
 
 
-@app.exception_handler(AuthJWTException)
-def authjwt_exception_handler(request: Request, exc: AuthJWTException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.message}
-    )
+# @app.exception_handler(AuthJWTException)
+# def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"detail": exc.message}
+#     )
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000, debug=True, reload=True)
+    uvicorn.run(app, host="127.0.0.1", port=8000, debug=True)

@@ -1,32 +1,29 @@
-from types import NoneType
-
 from fastapi import APIRouter, Request, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.auth.services import check_user_data, delete_token
-from api.deps import get_token_from_headers
-from api.auth.validators import LoginData, Token
-from api.exceptions import credentials_exception
+from api.auth.services import create_token, delete_token
+from core.deps import get_token_from_headers
 from db.base import get_session
+from schema.auth import LoginResponseSchema, LoginRequestSchema
 
 router = APIRouter()
 
 
-@router.post("/token/login/")
-async def get_user_list_handler(
-        request: Request,
-        body: LoginData,
+@router.post(
+    "/token/login/", response_model=LoginResponseSchema, status_code=201
+)
+async def login_handler(
+        body: LoginRequestSchema,
         session: AsyncSession = Depends(get_session),
 ):
-    token = await check_user_data(
+    token = await create_token(
         session=session, body=body
     )
-    response = Token(token=token)
-    return response
+    return token
 
 
 @router.post("/token/logout/", status_code=204)
-async def get_user_list_handler(
+async def logout_handler(
         request: Request,
         session: AsyncSession = Depends(get_session),
 ):

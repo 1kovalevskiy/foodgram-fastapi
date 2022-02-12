@@ -1,13 +1,12 @@
 from datetime import datetime, timedelta
-from typing import Any, Union
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
-from api.exceptions import credentials_exception
+from core.exceptions import credentials_exception
 from core import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

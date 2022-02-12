@@ -4,6 +4,10 @@ import logging
 from pydantic import ValidationError
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request, HTTPException
+from fastapi.responses import JSONResponse
+
+from core.exceptions import (validations_exception, credentials_exception,
+                             forbidden_exception, not_found_exception)
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -26,7 +30,7 @@ class LoggingSystem(BaseHTTPMiddleware):
             return response
         except ValidationError as e:
             logger.error(e)
-            raise HTTPException(status_code=400, detail=e.message)
+            raise e
         except Exception as e:
             logger.error(e)
             raise e
