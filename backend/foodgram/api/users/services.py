@@ -2,7 +2,7 @@ from sqlalchemy import select, func, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.crud import get_user_from_db
-from core.exceptions import validations_exception
+from core.exceptions import ValidationException
 from core.security import get_password_hash, verify_password
 from db.schema import users_table
 from schema.user import (UserResponseSchema, UserCreateSchema,
@@ -31,7 +31,7 @@ async def change_password(
         session: AsyncSession
 ):
     if not verify_password(body.current_password, user.password):
-        raise validations_exception()
+        raise ValidationException()
     hash_password = get_password_hash(body.new_password)
     query = update(users_table).where(
         user.id == users_table.c.id
@@ -56,10 +56,12 @@ async def check_available(
             email == users_table.c.email
         )
     else:
-        raise validations_exception()
+        raise ValidationException()
     available = await session.execute(check_available_query)
     if available.fetchone()[0] != 0:
-        raise validations_exception(message=f"{field} is not available")
+        raise ValidationException(
+            message={"detail": f"{field} is not available"}
+        )
 
 
 async def insert_user_to_db(

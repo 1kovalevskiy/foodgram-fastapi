@@ -4,7 +4,7 @@ from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.crud import get_user_from_db
-from core.exceptions import credentials_exception
+from core.exceptions import CredentialException
 from schema.user import UserSchema
 
 
@@ -26,11 +26,11 @@ async def get_token_from_headers(
 ):
     token: str = request.headers.get('authorization')
     if isinstance(token, NoneType):
-        raise credentials_exception()
+        raise CredentialException()
     elif not token.startswith('Token '):
-        raise credentials_exception()
+        raise CredentialException()
     elif len(token.split(' ')) != 2:
-        raise credentials_exception()
+        raise CredentialException()
     return token.split(' ')[1]
 
 

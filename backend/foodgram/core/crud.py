@@ -4,7 +4,7 @@ from pydantic import BaseModel, constr, EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.exceptions import credentials_exception, not_found_exception
+from core.exceptions import NotFoundException
 from core.security import get_current_user
 from db.schema import users_table
 from schema.user import UserSchema
@@ -37,5 +37,5 @@ async def get_user_from_db(
     user_db = await session.execute(query)
     user = user_db.fetchone()
     if user is None:
-        raise not_found_exception()
+        raise NotFoundException()
     return UserSchema(**dict(user))

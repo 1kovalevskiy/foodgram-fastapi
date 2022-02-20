@@ -6,7 +6,7 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
-from core.exceptions import credentials_exception
+from core.exceptions import CredentialException
 from core import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -65,7 +65,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         id: int = payload.get("id")
         if id is None:
-            raise credentials_exception
+            raise CredentialException()
     except JWTError:
-        raise credentials_exception
+        raise CredentialException()
     return id

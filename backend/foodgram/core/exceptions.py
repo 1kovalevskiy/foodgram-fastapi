@@ -1,30 +1,42 @@
-from fastapi import HTTPException, status
+class CustomException(Exception):
+    def __init__(self, message: dict = {"detail": "error"}, code: int = 500):
+        self.message = message
+        self.code = code
 
 
-def validations_exception(message: str | None = None):
-    return HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        detail=message or "Could not validate data",
-    )
+class ValidationException(CustomException):
+    def __init__(
+            self,
+            message: dict = {"detail": "Could not validate data"},
+            code: int = 400
+    ):
+        super().__init__(message=message, code=code)
 
 
-def credentials_exception(message: str | None = None):
-    return HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail=message or "Учетные данные не были предоставлены.",
-    )
+class CredentialException(CustomException):
+    def __init__(
+            self,
+            message: dict = {"detail": "Учетные данные не были предоставлены."},
+            code: int = 401
+    ):
+        super().__init__(message=message, code=code)
 
 
-def forbidden_exception(message: str | None = None):
-    return HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
-        detail=message or "У вас недостаточно прав для выполнения данного "
-                          "действия.",
-    )
+class ForbiddenException(CustomException):
+    def __init__(
+            self,
+            message: dict = {
+                "detail": "У вас недостаточно прав для выполнения данного "
+                           "действия."
+            },
+            code: int = 403):
+        super().__init__(message=message, code=code)
 
 
-def not_found_exception(message: str | None = None):
-    return HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=message or "Страница не найдена.",
-    )
+class NotFoundException(CustomException):
+    def __init__(
+            self,
+            message: dict = {"detail": "Страница не найдена."},
+            code: int = 404
+    ):
+        super().__init__(message=message, code=code)

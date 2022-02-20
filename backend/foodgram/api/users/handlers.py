@@ -2,12 +2,10 @@ from fastapi import APIRouter, Depends, Request
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.deps import get_token_from_headers, get_field_for_pagination, \
-    get_user_from_auth_header
+from core.deps import get_field_for_pagination, get_user_from_auth_header
 from core.crud import get_user_from_db
 from api.users.services import get_user_list, create_user, change_password
-from api.users.validators import  UserUnit
-from core.exceptions import not_found_exception, validations_exception
+from core.exceptions import NotFoundException, ValidationException
 from core.settings import ROOT_URL
 from db.base import get_session
 from schema.user import (UserListResponseSchema, UserResponseSchema,
@@ -46,8 +44,8 @@ async def get_user_handler(
         user = await get_user_from_auth_header(
             request=request, session=session
         )
-    except not_found_exception:
-        raise validations_exception()
+    except NotFoundException:
+        raise ValidationException()
     return user
 
 
