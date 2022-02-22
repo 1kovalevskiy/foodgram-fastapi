@@ -27,6 +27,7 @@ orjson==3.6.6
 paginate==0.5.6
 paginate-sqlalchemy==0.3.1
 passlib==1.7.4
+psycopg2-binary==2.9.3
 pyasn1==0.4.8
 pycparser==2.21
 pydantic==1.9.0
@@ -44,10 +45,10 @@ SQLAlchemy-Utils==0.38.2
 sqlalchemy2-stubs==0.0.2a19
 sqlmodel==0.0.6
 starlette==0.17.1
-typing-extensions==4.0.1
+typing_extensions==4.0.1
 ujson==4.3.0
 urllib3==1.26.8
 uvicorn==0.15.0
-uvloop==0.16.0
+# uvloop==0.16.0
 watchgod==0.7
 websockets==10.1

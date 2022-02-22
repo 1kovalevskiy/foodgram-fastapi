@@ -1,3 +1,5 @@
+from pydantic import BaseModel, constr, conint
+
 from schema.recipe import IngredientResponseObject, RecipeResponseSchema
 from schema.tag import TagResponseSchema
 from schema.user import UserResponseSchema
@@ -46,3 +48,54 @@ def object_list_from_db_recipe_rows(rows: list):
                                   res_dict[row.id].ingredients]:
                 res_dict[row.id].ingredients.append(ingredient)
     return list(res_dict.values())
+
+
+class RecipeSchema(BaseModel):
+    id: int
+    tags: list[TagResponseSchema | None]
+    author: UserResponseSchema
+    ingredients: list[IngredientResponseObject | None]
+    is_favorited: bool = False
+    is_in_shopping_cart: bool = False
+    name: constr(max_length=255)
+    image: str
+    text: str
+    cooking_time: conint(gt=0)
+
+
+def get_recipes_dict_from_lists(
+        list_of_recipes: list,
+        list_of_relative_ingredients: list,
+        list_of_relative_tags: list,
+        only_favorited: bool,
+        only_in_shopping_cart: bool
+):
+    recipes = {}
+    for recipe in list_of_recipes:
+        author = UserResponseSchema(
+            id=recipe.get('id_1'),
+            username=recipe.get('username'),
+            first_name=recipe.get('first_name'),
+            last_name=recipe.get('last_name'),
+            email=recipe.get('email'),
+            is_subscribed = False
+        )
+        recipes[recipe['id']] = RecipeSchema(
+            id=recipe['id'],
+            name=recipe['name'],
+            text=recipe['text'],
+            image=recipe['image'],
+            cooking_time=recipe['cooking_time'],
+            author=author,
+            is_favorited=only_favorited,
+            is_in_shopping_cart=only_in_shopping_cart,
+            tags=[],
+            ingredients=[]
+        )
+    for ingredient_ in list_of_relative_ingredients:
+        ingredient = IngredientResponseObject(**ingredient_)
+        recipes[ingredient_['recipe']].ingredients.append((ingredient))
+    for tag_ in list_of_relative_tags:
+        tag = TagResponseSchema(**tag_)
+        recipes[tag_['recipe']].tags.append((tag))
+    return list(recipes.values())
